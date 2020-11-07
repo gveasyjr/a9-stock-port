@@ -6,17 +6,16 @@
 
 import unittest
 
-from stock_port import stock_port
+from stock_port.stock_port import Stocks
 
 
-class TestStock_port(unittest.TestCase):
-    """Tests for `stock_port` package."""
+class TestSellStock(unittest.TestCase):
 
     def setUp(self):
-        """Set up test fixtures, if any."""
+        self.stks = Stocks()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
 
-    def test_000_something(self):
+    def test_sell0_something(self):
         """Test something."""
