@@ -36,7 +36,7 @@ class TestBuyStock(unittest.TestCase):
 
     """ rainy day tests -- app errors caused via unexpected param values """
     def test_negative_shares(self):
-        self.assertEqual(self.stks.buy('GOOG', -1, 1000), -1)
+        self.assertRaises(ValueError, self.stks.buy, *('GOOG', -1, 1000))
 
     def test_partial_shares(self):
         self.assertEqual(self.stks.buy('GOOG', 5.5, 1000), -2)
