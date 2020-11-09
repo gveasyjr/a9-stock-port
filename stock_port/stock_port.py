@@ -12,6 +12,8 @@ class Stocks(object):
     def buy(self, company, num_shares, unit_price):
         if num_shares < 1:
             return(-1)
+        if not isinstance(num_shares, int):
+            return(-2)
         self.stocks.append([company, num_shares, unit_price])
 
     def sell(self, company, num_shares):
