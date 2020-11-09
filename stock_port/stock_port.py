@@ -13,7 +13,7 @@ class Stocks(object):
         if num_shares < 1:
             raise ValueError('Number shares purchased less than 1')
         if not isinstance(num_shares, int):
-            return(-2)
+            raise ValueError('Fractional number shares purchase')
         self.stocks.append([company, num_shares, unit_price])
 
     def sell(self, company, num_shares):

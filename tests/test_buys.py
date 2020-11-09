@@ -38,6 +38,7 @@ class TestBuyStock(unittest.TestCase):
     def test_negative_shares(self):
         self.assertRaises(ValueError, self.stks.buy, *('GOOG', -1, 1000))
 
-    def test_partial_shares(self):
-        self.assertEqual(self.stks.buy('GOOG', 5.5, 1000), -2)
+    def test_fractional_shares(self):
+        # signature for assertRaises(TypeError, test_function, args) 
+        self.assertRaises(ValueError, self.stks.buy, 'GOOG', 5.5, 1000)
 
