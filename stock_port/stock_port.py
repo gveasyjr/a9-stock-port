@@ -10,6 +10,8 @@ class Stocks(object):
         self.cash_on_hand = 15000
 
     def buy(self, company, num_shares, unit_price):
+        if num_shares < 1:
+            return(-1)
         self.stocks.append([company, num_shares, unit_price])
 
     def sell(self, company, num_shares):
