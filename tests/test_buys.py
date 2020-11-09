@@ -34,3 +34,7 @@ class TestBuyStock(unittest.TestCase):
         self.stks.buy('AAPL', 100, 102.0)
         self.assertEqual(self.stks.cost_basis(), 30400.)
 
+    """ rainy day tests -- app errors caused via unexpected param values """
+    def test_negative_shares(self):
+        self.assertEqual(self.stks.buy('GOOG', -1, 1000), -1)
+
