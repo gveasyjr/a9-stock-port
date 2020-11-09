@@ -42,6 +42,9 @@ class Stocks(object):
                 basis += shares * unit_price
         return basis
 
+    def last_xact_cost_basis(self):
+        return self.stocks[-1][1] * self.stocks[-1][2]
+
     def print_portfolio(self):
         print('Company,', 'Number Shares,', 'Share Price')
         for company, num_shares, unit_price in self.stocks:

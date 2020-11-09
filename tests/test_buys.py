@@ -5,7 +5,7 @@
 
 
 import unittest
-
+from hypothesis import given, strategies as st, settings, Verbosity
 from stock_port.stock_port import Stocks
 
 
@@ -16,12 +16,14 @@ class TestBuyStock(unittest.TestCase):
         self.stks = Stocks()
 
     def tearDown(self):
-        """Tear down test fixtures, if any."""
+        pass
 
     """ Sunny day tests -- no errors in input params """
-    def test_buy_one_company(self):
-        self.stks.buy('HON', 100, 132.0)
-        self.assertEqual(self.stks.cost_basis(), 13200.0)
+    @settings(verbosity=Verbosity.verbose)
+    @given(num_shares=st.integers(min_value=1))
+    def test_buy_one_company(self, num_shares):
+        self.stks.buy('HON', num_shares, 132.0)
+        self.assertEqual(self.stks.last_xact_cost_basis(), num_shares * 132.0)
 
     def test_buy_two_companies(self):
         self.stks.buy('HON', 100, 132.0)
