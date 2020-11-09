@@ -3,6 +3,9 @@
 class Stocks(object):
 
     def __init__(self):
+        # stocks is a list of lists where each element
+        # is a list of company name, num shares purchased
+        # and the price per share
         self.stocks = []
         self.cash_on_hand = 15000
 
@@ -21,10 +24,18 @@ class Stocks(object):
             del self.stocks[idx]
 
     def cost_basis(self):
-        """Calculate the cost basis for the stocks acquired"""
+        """Calculate the cost basis for all stocks acquired in the portfolio"""
         basis = 0.0
         for company, shares, unit_price in self.stocks:
             basis += shares * unit_price
+        return basis
+
+    def cost_basis_company(self, target_company):
+        """Calculate the cost basis for stocks in one specific company"""
+        basis = 0.0
+        for company, shares, unit_price in self.stocks:
+            if company == target_company:
+                basis += shares * unit_price
         return basis
 
     def print_portfolio(self):

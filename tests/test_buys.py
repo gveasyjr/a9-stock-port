@@ -10,13 +10,27 @@ from stock_port.stock_port import Stocks
 
 
 class TestBuyStock(unittest.TestCase):
-    """Tests for `stock_port` package."""
 
+    """Tests fixtues for `stock_port` package."""
     def setUp(self):
-       self.stks = Stocks()
+        self.stks = Stocks()
 
     def tearDown(self):
         """Tear down test fixtures, if any."""
 
-    def test_buy_something(self):
-        """Test buy something."""
+    """ Sunny day tests -- no errors in input params """
+    def test_buy_one_company(self):
+        self.stks.buy('HON', 100, 132.0)
+        self.assertEqual(self.stks.cost_basis(), 13200.0)
+
+    def test_buy_two_companies(self):
+        self.stks.buy('HON', 100, 132.0)
+        self.stks.buy('MSFT', 50, 200.0)
+        self.assertEqual(self.stks.cost_basis(), 23200)
+
+    def test_buy_one_company_twice(self):
+        self.stks.buy('AAPL',100, 102.0)
+        self.stks.buy('MSFT', 50, 200.0)
+        self.stks.buy('AAPL', 100, 102.0)
+        self.assertEqual(self.stks.cost_basis(), 30400.)
+
