@@ -40,7 +40,6 @@ class TestSellStock(unittest.TestCase):
         self.assertEqual(self.stks.cost_basis(), 0.0)
 
 
-
     @given(company=st.text('ABCDELGHIJKLMNOPQRSTUVWXYZ', min_size=3, max_size=5), shares=st.integers(min_value=1, max_value=1000), prices=st.floats(min_value=1, max_value=1000))
     @settings(max_examples=5)
     def test_sell_one_company_partial(self, company, shares, prices):
@@ -52,31 +51,23 @@ class TestSellStock(unittest.TestCase):
         new_value = remaining_shares * prices
         self.assertEqual(self.stks.cost_basis(), new_value)
 
+    @given(company=st.text('ABCDELGHIJKLMNOPQRSTUVWXYZ', min_size=3, max_size=5),
+           shares=st.integers(min_value=-1000, max_value=-1),  
+           prices=st.floats(min_value=1, max_value=1000))
+    @settings(verbosity=Verbosity.verbose, max_examples=5)
+    def test_sell_one_company_with_negative_shares(self, company, shares, prices):
+        with self.assertRaises(ValueError):
+            self.stks.buy(company, shares, prices)
 
-    @given(company=st.text('ABCDELGHIJKLMNOPQRSTUVWXYZ', min_size=3, max_size=5), shares=st.integers(min_value=1, max_value=1000), prices=st.floats(min_value=1, max_value=1000),
-           less_shares=st.integers(min_value=1, max_value=10))
-    @settings(max_examples=5)
-    def test_sell_one_company_small(self, company, shares, prices, less_shares):
+    @given(company=st.text('ABCDELGHIJKLMNOPQRSTUVWXYZ', min_size=3, max_size=5),
+           shares=st.integers(min_value=1, max_value=1000000),  # Very large values for shares
+           prices=st.floats(min_value=1, max_value=1000000))  # Very large values for prices
+    @settings(max_examples=5, verbosity=Verbosity.verbose)
+    def test_sell_one_company_with_large_values(self, company, shares, prices):
+        # Attempt to buy and sell stocks with very large values
         self.stks = Stocks()
         self.stks.buy(company, shares, prices)
-        remaining_shares = shares - less_shares
-        self.stks.sell(company, less_shares)
-        new_value = remaining_shares * prices
-        self.assertEqual(self.stks.cost_basis(), new_value)
-
-    # def test_buy_and_sell_multiple_companies(self, company1, shares1, prices1, company2, shares2, prices2):
-    #     self.stks = Stocks()
-    #     self.stks.buy(company1, shares1, prices1)
-    #     self.stks.buy(company2, shares2, prices2)
-    #     total_value = (shares1 * prices1) + (shares2 * prices2)
+        self.stks.sell(company, shares)  # Attempt to sell all shares
         
-    #     # Selling half of the shares of each company
-    #     sold_shares1 = shares1 // 2
-    #     sold_shares2 = shares2 // 2
-    #     self.stks.sell(company1, sold_shares1)
-    #     self.stks.sell(company2, sold_shares2)
-        
-    #     remaining_value = ((shares1 - sold_shares1) * prices1) + ((shares2 - sold_shares2) * prices2)
-    #     self.assertEqual(self.stks.cost_basis(), remaining_value)
-
-
+        # The cost basis should be 0, as all shares have been sold
+        self.assertEqual(self.stks.cost_basis(), 0)

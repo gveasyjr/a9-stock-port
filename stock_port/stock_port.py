@@ -19,9 +19,11 @@ class Stocks(object):
         self.stocks.append([company, num_shares, unit_price])
 
     def sell(self, company, num_shares):
+        if num_shares < 0:
+            return 0  
         for xact in self.stocks:
             if xact[0] == company:
-                num_to_sell = min(num_shares, xact[1])  # Sell as many stocks as possible, up to available quantity
+                num_to_sell = min(num_shares, xact[1]) 
                 xact[1] -= num_to_sell
                 if xact[1] == 0:
                     self.stocks.remove(xact)
