@@ -60,14 +60,12 @@ class TestSellStock(unittest.TestCase):
             self.stks.buy(company, shares, prices)
 
     @given(company=st.text('ABCDELGHIJKLMNOPQRSTUVWXYZ', min_size=3, max_size=5),
-           shares=st.integers(min_value=1, max_value=1000000),  # Very large values for shares
-           prices=st.floats(min_value=1, max_value=1000000))  # Very large values for prices
+           shares=st.integers(min_value=1, max_value=1000000),  
+           prices=st.floats(min_value=1, max_value=1000000))  
     @settings(max_examples=5, verbosity=Verbosity.verbose)
     def test_sell_one_company_with_large_values(self, company, shares, prices):
-        # Attempt to buy and sell stocks with very large values
+
         self.stks = Stocks()
         self.stks.buy(company, shares, prices)
-        self.stks.sell(company, shares)  # Attempt to sell all shares
-        
-        # The cost basis should be 0, as all shares have been sold
+        self.stks.sell(company, shares) 
         self.assertEqual(self.stks.cost_basis(), 0)
