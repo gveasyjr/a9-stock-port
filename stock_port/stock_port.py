@@ -10,6 +10,8 @@ class Stocks(object):
         self.cash_on_hand = 15000
 
     def buy(self, company, num_shares, unit_price):
+        if company != company.upper():
+            company = company.upper()
         if num_shares < 1:
             raise ValueError('Number shares purchased less than 1')
         if not isinstance(num_shares, int):
