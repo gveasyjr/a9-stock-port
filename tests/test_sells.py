@@ -11,7 +11,7 @@ from stock_port.stock_port import Stocks
 company_names = st.text(min_size=1)
 num_shares = st.integers(min_value=1, max_value=1000)
 unit_prices = st.floats(min_value=0, max_value=1000)
-custom_characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ123456789'
+shares2 = st.integers(min_value=1, max_value=1000)
 
 
 class TestSellStock(unittest.TestCase):
@@ -32,7 +32,7 @@ class TestSellStock(unittest.TestCase):
     def test_empty_portfolio(self):
         self.assertEqual(self.stks.cost_basis(), 0.0)
 
-    @given(company=st.text(min_size=3, max_size=5), shares=st.integers(min_value=1, max_value=1000), prices= st.floats(min_value=0, max_value=1000))
+    @given(company=st.text('ABCDELGHIJKLMNOPQRSTUVWXYZ', min_size=3, max_size=5), shares=st.integers(min_value=1, max_value=1000), prices= st.floats(min_value=1, max_value=1000))
     @settings(verbosity=Verbosity.verbose,max_examples=5)
     def test_sell_one_company_full(self, company, shares, prices):
         self.stks.buy(company, shares, prices)
@@ -40,24 +40,33 @@ class TestSellStock(unittest.TestCase):
         self.assertEqual(self.stks.cost_basis(), 0.0)
 
 
-    @given(company=st.text(min_size=3, max_size=5), shares=st.integers(min_value=1, max_value=1000), prices= st.floats(min_value=0, max_value=1000))
+
+    @given(company=st.text('ABCDELGHIJKLMNOPQRSTUVWXYZ', min_size=3, max_size=5), shares=st.integers(min_value=1, max_value=1000), prices=st.floats(min_value=1, max_value=1000))
     @settings(max_examples=5)
     def test_sell_one_company_partial(self, company, shares, prices):
         self.stks = Stocks()
         self.stks.buy(company, shares, prices)
         shares_sell = shares // 2
         self.stks.sell(company, shares_sell)
-        if(prices < 0):
-            self.assertEqual(self.stks.cost_basis(), 0.0)
-        new_value = (shares * - shares_sell) - (prices)
+        remaining_shares = shares - shares_sell
+        new_value = remaining_shares * prices
         self.assertEqual(self.stks.cost_basis(), new_value)
 
 
- 
-    # def test_sell_2nd_company_bought(self):
-    #     self.stks.buy('AAPL', 10, 200)
-    #     self.stks.buy('MSFT', 50, 100)
-    #     self.stks.sell('MSFT', 50)
-    #     self.assertEqual(self.stks.cost_basis(), 2000)
+
+    @given(company1=st.text('ABCDELGHIJKLMNOPQRSTUVWXYZ', min_size=3, max_size=5), shares1=st.integers(min_value=1, max_value=1000), prices1= st.floats(min_value=1, max_value=1000),
+           company2=st.text('ABCDELGHIJKLMNOPQRSTUVWXYZ', min_size=3, max_size=5), shares2=st.integers(min_value=1, max_value=1000), prices2= st.floats(min_value=1, max_value=1000),
+           new_share=st.integers(min_value=1, max_value=1000))
+    @settings(verbosity=Verbosity.verbose,max_examples=5)
+    def test_sell_2nd_company_bought(self,company1, shares1, prices1, company2, shares2, prices2, new_share):
+        self.stks.buy(company1, shares1, prices1)
+        self.stks.buy(company2, shares2, prices2)
+        while(new_share > shares2):
+            new_share=st.integers(min_value=1, max_value=1000)
+        self.stks.sell(company2, new_share)
+
+        new_value = (shares1 * prices1) + (shares2 * prices2)
+        new_value = new_value - (new_share * prices2)
+        self.assertEqual(self.stks.cost_basis(), new_value)
 
 

@@ -19,15 +19,15 @@ class Stocks(object):
         self.stocks.append([company, num_shares, unit_price])
 
     def sell(self, company, num_shares):
-        idx = -1
         for xact in self.stocks:
             if xact[0] == company:
-                xact[1] -= num_shares
+                num_to_sell = min(num_shares, xact[1])  # Sell as many stocks as possible, up to available quantity
+                xact[1] -= num_to_sell
                 if xact[1] == 0:
-                    idx = self.stocks.index(xact)
+                    self.stocks.remove(xact)
+                num_shares -= num_to_sell
+                if num_shares == 0:
                     break
-        if idx != -1:
-            del self.stocks[idx]
 
     def cost_basis(self):
         """Calculate the cost basis for all stocks acquired in the portfolio"""
