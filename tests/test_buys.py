@@ -46,11 +46,12 @@ class TestBuyStock(unittest.TestCase):
         stks.buy(company1, num_shares1, price_per_share1)
         self.assertEqual(self.stks.cost_basis(), 0.0)
 
-    # def test_buy_one_company_twice(self):
-    #     self.stks.buy('AAPL',100, 102.0)
-    #     self.stks.buy('MSFT', 50, 200.0)
-    #     self.stks.buy('AAPL', 100, 102.0)
-    #     self.assertEqual(self.stks.cost_basis(), 30400.)
+    @given(company1=st.text(alphabet='ABCDEFGHIJKLMNOPQRSTUVWXYZ', min_size=3, max_size=5),num_shares1=st.integers(min_value=1), price_per_share1=st.floats(min_value=1, max_value=10000))
+    @settings(verbosity=Verbosity.verbose, max_examples=5)
+    def test_buy_large_value(self, company1, num_shares1, price_per_share1):
+        stks = Stocks()
+        stks.buy(company1, num_shares1, price_per_share1)
+        self.assertEqual(stks.cost_basis(), (price_per_share1 * num_shares1))
 
     # """ rainy day tests -- app errors caused via unexpected param values """
     # def test_negative_shares(self):
