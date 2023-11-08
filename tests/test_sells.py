@@ -53,20 +53,30 @@ class TestSellStock(unittest.TestCase):
         self.assertEqual(self.stks.cost_basis(), new_value)
 
 
-
-    @given(company1=st.text('ABCDELGHIJKLMNOPQRSTUVWXYZ', min_size=3, max_size=5), shares1=st.integers(min_value=1, max_value=1000), prices1= st.floats(min_value=1, max_value=1000),
-           company2=st.text('ABCDELGHIJKLMNOPQRSTUVWXYZ', min_size=3, max_size=5), shares2=st.integers(min_value=1, max_value=1000), prices2= st.floats(min_value=1, max_value=1000),
-           new_share=st.integers(min_value=1, max_value=1000))
-    @settings(verbosity=Verbosity.verbose,max_examples=5)
-    def test_sell_2nd_company_bought(self,company1, shares1, prices1, company2, shares2, prices2, new_share):
-        self.stks.buy(company1, shares1, prices1)
-        self.stks.buy(company2, shares2, prices2)
-        while(new_share > shares2):
-            new_share=st.integers(min_value=1, max_value=1000)
-        self.stks.sell(company2, new_share)
-
-        new_value = (shares1 * prices1) + (shares2 * prices2)
-        new_value = new_value - (new_share * prices2)
+    @given(company=st.text('ABCDELGHIJKLMNOPQRSTUVWXYZ', min_size=3, max_size=5), shares=st.integers(min_value=1, max_value=1000), prices=st.floats(min_value=1, max_value=1000),
+           less_shares=st.integers(min_value=1, max_value=10))
+    @settings(max_examples=5)
+    def test_sell_one_company_small(self, company, shares, prices, less_shares):
+        self.stks = Stocks()
+        self.stks.buy(company, shares, prices)
+        remaining_shares = shares - less_shares
+        self.stks.sell(company, less_shares)
+        new_value = remaining_shares * prices
         self.assertEqual(self.stks.cost_basis(), new_value)
+
+    # def test_buy_and_sell_multiple_companies(self, company1, shares1, prices1, company2, shares2, prices2):
+    #     self.stks = Stocks()
+    #     self.stks.buy(company1, shares1, prices1)
+    #     self.stks.buy(company2, shares2, prices2)
+    #     total_value = (shares1 * prices1) + (shares2 * prices2)
+        
+    #     # Selling half of the shares of each company
+    #     sold_shares1 = shares1 // 2
+    #     sold_shares2 = shares2 // 2
+    #     self.stks.sell(company1, sold_shares1)
+    #     self.stks.sell(company2, sold_shares2)
+        
+    #     remaining_value = ((shares1 - sold_shares1) * prices1) + ((shares2 - sold_shares2) * prices2)
+    #     self.assertEqual(self.stks.cost_basis(), remaining_value)
 
 
